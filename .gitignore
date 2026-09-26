@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# PyInstaller
+build/
+dist/
+*.spec
+
+# Gebaute / fremde Binaries (nicht ins Repo)
+*.exe
+
+# Persönliche Laufzeitdaten
+config.json
+cache.json
+history.csv
+overlay*.txt
+log_*.txt
+tk_err.txt
