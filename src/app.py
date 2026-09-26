@@ -369,6 +369,34 @@ def diagnose(app):
                          f"{len(devs)} alte(r) Wert(e)"))
         else:
             rows.append(("Messwerte", False, "keine Werte"))
+        for d in devs[:8]:
+            try:
+                p = d.get("percentage")
+                parts = [f"{p}%" if p is not None else "–"]
+                try:
+                    if d.get("consumption_mw") is not None:
+                        parts.append(
+                            f"{float(d['consumption_mw']):.1f} mW")
+                except Exception:
+                    pass
+                try:
+                    if d.get("mileage") is not None:
+                        parts.append(f"noch {float(d['mileage']):.0f}h")
+                except Exception:
+                    pass
+                try:
+                    if d.get("voltage_mv") is not None:
+                        parts.append(f"{int(d['voltage_mv'])} mV")
+                except Exception:
+                    pass
+                nm = ""
+                try:
+                    nm = app.disp_name(d)
+                except Exception:
+                    nm = d.get("name", "?")
+                rows.append((f"  {nm}", p is not None, " · ".join(parts)))
+            except Exception:
+                continue
     except Exception:
         rows.append(("Messwerte", False, "?"))
     try:
@@ -1631,6 +1659,18 @@ class App:
                     bits.append(f"FW {dev['firmware']}")
                 if dev.get("lighting"):
                     bits.append("RGB")
+                try:
+                    mw = dev.get("consumption_mw")
+                    if mw is not None:
+                        bits.append(f"{float(mw):.1f} mW".replace(".", ","))
+                except Exception:
+                    pass
+                try:
+                    mls = dev.get("max_life_span")
+                    if mls is not None:
+                        bits.append(f"max {float(mls):.0f}h")
+                except Exception:
+                    pass
                 if bits:
                     sub = ((sub + " • ") if sub else "") + " · ".join(bits)
             except Exception:

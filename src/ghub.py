@@ -99,10 +99,18 @@ async def get_battery_async(device_id: str, timeout: float = 6.0):
         p = msg.get("payload") or {}
         if "percentage" not in p:
             return None
+        cons = p.get("consumption") or {}
+        det = cons.get("details") or {}
         return {
             "percentage": int(p.get("percentage", 0)),
             "charging": bool(p.get("charging", False)),
             "mileage": p.get("mileage"),
+            "max_life_span": p.get("maxLifeSpan"),
+            "consumption_mw": cons.get("value"),
+            "consumption_detail": {k: det.get(k) for k in
+                                   ("system", "sensor", "mcu", "roller",
+                                    "reportRate", "lighting", "volume",
+                                    "haptics") if det.get(k) is not None},
             "critical": bool(p.get("criticalLevel", False)),
             "fullyCharged": bool(p.get("fullyCharged", False)),
         }
