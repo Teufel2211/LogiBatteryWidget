@@ -74,6 +74,7 @@ Persönliche Daten (`config.json`, `cache.json`, `history.csv`,
 ## Credits
 
 - [Ithilias/logitray](https://github.com/Ithilias/logitray) – HID++ ohne G HUB
+  (MIT, siehe `THIRD_PARTY_NOTICES.md`)
 - G-HUB-Protokoll-Recherche u.a.: `bmrussell/LGBattery`,
   `andyvorld/LGSTrayBattery`, Solaar, OpenLogi-Docs
 
