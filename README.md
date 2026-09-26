@@ -12,21 +12,22 @@ Getestet mit: **G502 LIGHTSPEED Wireless Gaming Mouse** (USB-Dongle, G HUB).
 **Variante A – Python:**
 ```
 pip install -r requirements.txt
-python app.py
+python src/app.py
 ```
-(`start.bat` macht genau das per Doppelklick. `python app.py --demo`
+(`scripts/start.bat` macht genau das per Doppelklick. `python src/app.py --demo`
 startet eine Demo ohne Hardware.)
 
-**Variante B – .exe bauen:**
+**Variante B – .exe bauen (aus dem Projektroot):**
 ```
 pip install pyinstaller
-python -m PyInstaller --noconfirm --clean --onefile --windowed --name LogiBatteryWidget app.py
+python -m PyInstaller --noconfirm --clean --onefile --windowed --name LogiBatteryWidget src/app.py
 ```
-Danach liegt `LogiBatteryWidget.exe` in `dist/` (ohne Konsolenfenster,
-mit Autostart per Registry möglich).
+Danach `dist/LogiBatteryWidget.exe` neben die anderen Dateien
+(Projektroot) kopieren – ohne Konsolenfenster, mit Autostart per
+Registry möglich.
 
 **logitray.exe (optional, für Messwerte ohne G HUB):**
-`get-logitray.bat` lädt es von
+`scripts/get-logitray.bat` lädt es von
 [Ithilias/logitray](https://github.com/Ithilias/logitray) in den
 Programmordner. Ohne die Datei entfallen nur die HID-Live-Werte –
 alles andere läuft trotzdem.
@@ -52,20 +53,21 @@ alles andere läuft trotzdem.
 - **🌐 Web-Dashboard:** `http://127.0.0.1:8321/` (nur dieser PC) –
   auch als OBS-Browserquelle nutzbar; dazu `overlay.txt`-Export und
   **MQTT-Export** mit Home-Assistant-Discovery
-- **Autostart:** Registry-Run-Key (`autostart_an.bat` / `autostart_aus.bat`
+- **Autostart:** Registry-Run-Key (`scripts/autostart_an.bat` / `scripts/autostart_aus.bat`
   oder per Rechtsklick/Tray)
 
 ## Dateien
 
 | Datei | Zweck |
 |---|---|
-| `app.py` | Widget + Tray + Logik |
-| `ghub.py` | G-HUB-Websocket (`ws://localhost:9010`) |
-| `hidpp.py` | HID++-Direktabfrage (experimentell) |
-| `fallback.py` | Datei-DB-, Extern- und logitray-Quellen |
-| `mqtt_pub.py` | MQTT-Export |
-| `webdash.py` | Web-Dashboard + JSON-API |
-| `settings_ui.py` / `history_ui.py` / `diag_ui.py` | Dialoge |
+| `src/app.py` | Widget + Tray + Logik |
+| `src/ghub.py` | G-HUB-Websocket (`ws://localhost:9010`) |
+| `src/hidpp.py` | HID++-Direktabfrage (experimentell) |
+| `src/fallback.py` | Datei-DB-, Extern- und logitray-Quellen |
+| `src/mqtt_pub.py` | MQTT-Export |
+| `src/webdash.py` | Web-Dashboard + JSON-API |
+| `src/settings_ui.py` / `src/history_ui.py` / `src/diag_ui.py` | Dialoge |
+| `scripts/` | `start.bat`, Autostart- und logitray-Skripte |
 | `requirements.txt` | Python-Abhängigkeiten |
 
 Persönliche Daten (`config.json`, `cache.json`, `history.csv`,

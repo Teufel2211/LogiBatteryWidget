@@ -202,12 +202,13 @@ def read_hid_batteries(timeout_total=8.0):
 
 def logitray_exe():
     import sys
-    base = os.path.dirname(os.path.abspath(sys.argv[0])) \
-        if getattr(sys, "frozen", False) else os.path.dirname(
-            os.path.abspath(__file__))
-    cands = [os.path.join(base, "logitray.exe"),
-             os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                          "logitray.exe")]
+    if getattr(sys, "frozen", False):
+        base = os.path.dirname(os.path.abspath(sys.executable))
+    else:
+        # fallback.py liegt in src/, Exe im Projektroot
+        base = os.path.dirname(
+            os.path.dirname(os.path.abspath(__file__)))
+    cands = [os.path.join(base, "logitray.exe")]
     for c in cands:
         if os.path.isfile(c):
             return c

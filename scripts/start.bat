@@ -1,9 +1,9 @@
 @echo off
 title LogiBatteryWidget
-cd /d "%~dp0"
+cd /d "%~dp0.."
 echo Installiere Abhaengigkeiten...
 python -m pip install -r requirements.txt
 echo.
 echo Starte Widget...
-python app.py
+python src\app.py
 pause

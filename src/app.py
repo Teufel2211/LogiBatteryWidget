@@ -1,6 +1,6 @@
 """LogiBatteryWidget – Akkustand aller G HUB Geräte als Widget + Tray.
 
-Start:  python app.py [--demo]
+Start (aus Projektroot):  python src/app.py [--demo]
 Benötigt: G HUB muss laufen (lghub_agent auf Port 9010).
 """
 import json
@@ -12,9 +12,16 @@ import time
 import tkinter as tk
 from tkinter import ttk
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if getattr(sys, "frozen", False):
+    # Gebaute .exe: Daten liegen neben der Exe
+    BASE_DIR = os.path.dirname(os.path.abspath(sys.executable))
+    sys.path.insert(0, BASE_DIR)
+else:
+    # Dev: app.py liegt in src/, Daten im Projektroot
+    BASE_DIR = os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, os.path.join(BASE_DIR, "src"))
 CONFIG_PATH = os.path.join(BASE_DIR, "config.json")
-sys.path.insert(0, BASE_DIR)
 
 import ghub
 
@@ -732,11 +739,11 @@ def autostart_command():
     # Als .exe (PyInstaller): direkt die Exe eintragen
     if getattr(sys, "frozen", False):
         return f'"{sys.executable}"'
-    # Unsichtbar starten via pythonw + app.py (kein Konsolenfenster)
+    # Unsichtbar starten via pythonw + src/app.py (kein Konsolenfenster)
     pyw = os.path.join(os.path.dirname(sys.executable), "pythonw.exe")
     if not os.path.exists(pyw):
         pyw = sys.executable
-    return f'"{pyw}" "{os.path.join(BASE_DIR, "app.py")}"'
+    return f'"{pyw}" "{os.path.join(BASE_DIR, "src", "app.py")}"'
 
 
 def is_autostart_enabled():
@@ -897,14 +904,15 @@ class App:
                 pass
 
         self._build_ui()
-        self._drag_data = {"x": 0, "y": 0}
+        self._drag_data = {"x": 0, "y": 0, "dragging": False,
+                           "sx": 0, "sy": 0}
         self._last_pos_save = 0.0
-        self.header.bind("<ButtonPress-1>", self._drag_start)
-        self.header.bind("<B1-Motion>", self._drag_move)
-        self.header.bind("<ButtonRelease-1>", self._drag_end)
-        self.title_lbl.bind("<ButtonPress-1>", self._drag_start)
-        self.title_lbl.bind("<B1-Motion>", self._drag_move)
-        self.title_lbl.bind("<ButtonRelease-1>", self._drag_end)
+        # Ziehen von überall (Toplevel-Bindung greift für alle Kinder,
+        # auch bei ausgeblendeter Titelzeile). Klicks bleiben erhalten:
+        # erst ab 4px Bewegung wird gezogen.
+        self.root.bind("<ButtonPress-1>", self._drag_start)
+        self.root.bind("<B1-Motion>", self._drag_move)
+        self.root.bind("<ButtonRelease-1>", self._drag_end)
         # Rechtsklick-Menü: Vordergrund/Hintergrund umschalten
         self.root.bind("<Button-3>", self._show_context_menu)
 
@@ -1145,8 +1153,17 @@ class App:
     def _drag_start(self, e):
         self._drag_data["x"] = e.x_root - self.root.winfo_x()
         self._drag_data["y"] = e.y_root - self.root.winfo_y()
+        self._drag_data["sx"] = e.x_root
+        self._drag_data["sy"] = e.y_root
+        self._drag_data["dragging"] = False
 
     def _drag_move(self, e):
+        # erst ab 4px als Ziehen werten (sonst normale Klicks)
+        if not self._drag_data["dragging"]:
+            if abs(e.x_root - self._drag_data["sx"]) < 4 \
+                    and abs(e.y_root - self._drag_data["sy"]) < 4:
+                return
+            self._drag_data["dragging"] = True
         x = e.x_root - self._drag_data["x"]
         y = e.y_root - self._drag_data["y"]
         # Ecken-/Kanten-Snap
