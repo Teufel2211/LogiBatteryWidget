@@ -374,12 +374,6 @@ def diagnose(app):
                 p = d.get("percentage")
                 parts = [f"{p}%" if p is not None else "–"]
                 try:
-                    if d.get("consumption_mw") is not None:
-                        parts.append(
-                            f"{float(d['consumption_mw']):.1f} mW")
-                except Exception:
-                    pass
-                try:
                     if d.get("mileage") is not None:
                         parts.append(f"noch {float(d['mileage']):.0f}h")
                 except Exception:
@@ -1655,12 +1649,6 @@ class App:
                 bits = []
                 if dev.get("connection"):
                     bits.append(str(dev["connection"]).title())
-                try:
-                    mw = dev.get("consumption_mw")
-                    if mw is not None:
-                        bits.append(f"{float(mw):.1f} mW".replace(".", ","))
-                except Exception:
-                    pass
                 try:
                     mls = dev.get("max_life_span")
                     if mls is not None:
