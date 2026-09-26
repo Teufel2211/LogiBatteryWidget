@@ -1655,10 +1655,6 @@ class App:
                 bits = []
                 if dev.get("connection"):
                     bits.append(str(dev["connection"]).title())
-                if dev.get("firmware"):
-                    bits.append(f"FW {dev['firmware']}")
-                if dev.get("lighting"):
-                    bits.append("RGB")
                 try:
                     mw = dev.get("consumption_mw")
                     if mw is not None:
@@ -1863,8 +1859,6 @@ class App:
                     bits = []
                     if d.get("connection"):
                         bits.append(str(d["connection"]).title())
-                    if d.get("firmware"):
-                        bits.append(f"FW {d['firmware']}")
                     if d.get("charging"):
                         bits.append("lädt")
                     info = " · ".join(bits)
